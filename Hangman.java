@@ -17,6 +17,8 @@ private String Word;
 private HangmanCanvas canvas;
 private String CurrentWord;
     public void run() {
+    	println("Welcome to hangman!");
+    	println("Guess a letter, any letter.");
     	rg = RandomGenerator.getInstance();
     	init();
     	Word = chooseWord();
