@@ -11,11 +11,17 @@ import acm.util.*;
 import java.awt.*;
 
 public class Hangman extends ConsoleProgram {
+/** Random Generator */
 private RandomGenerator rg;
+/** lexicon for the game */
 private HangmanLexicon lexicon;
+/** The secret word used in the game */
 private String Word;
+/** This is the game canvas */
 private HangmanCanvas canvas;
+/** This is what the word currently looks like */
 private String CurrentWord;
+/** runs the program */
     public void run() {
     	println("Welcome to hangman!");
     	println("Guess a letter, any letter.");
@@ -26,7 +32,7 @@ private String CurrentWord;
     	println(Word);
     	println(CurrentWord);
 	}
-/** initializes the canvas */    
+/** initializes the canvas and lexicon */    
     public void init() {
     	canvas = new HangmanCanvas();
     	add(canvas);
@@ -42,7 +48,7 @@ private String CurrentWord;
 		THE_WORD = lexicon.getWord(wordNumber);
     	return THE_WORD;
     }
-    // need to complete
+    /** Generates the currentWord String */
     private void currentWordGenerator() {
     	int wordLength = Word.length();
     	CurrentWord = "-";
