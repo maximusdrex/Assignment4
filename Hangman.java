@@ -17,75 +17,107 @@ private RandomGenerator rg;
 private HangmanLexicon lexicon;
 /** The secret word used in the game */
 private String Word;
-/** This is the game canvas */
+/**
+ *  This is the game canvas 
+ */
 private HangmanCanvas canvas;
-/** This is what the word currently looks like */
-private String CurrentWord;
-/** Letter that the user guessed */
+/**
+ * What the word currently looks like.
+ */
+private char[] CurrentWord;
+/**
+ * Letter that the user guessed.
+ */
 private char UserGuess;
-/** runs the program */
+/**
+ * The user's lives.
+ */
 private int Lives = 8;
+/**
+ * Runs the program.
+ */
     public void run() {
-     //Starts the game
-     setTitle("Hangman");
-     println("Welcome to hangman!");
-     println("Guess a letter, any letter. Use capital letters.");
-     //Initializes the game.
-     rg = RandomGenerator.getInstance();
-     init();
-     Word = chooseWord();
-     currentWordGenerator();
-     println(Word);
-     println(CurrentWord);
+    	//Starts the game
+    	setTitle("Hangman");
+    	println("Welcome to hangman!");
+    	println("Guess a letter, any letter. Use capital letters.");
+    	//Initializes the game.
+    	rg = RandomGenerator.getInstance();
+    	Word = chooseWord();
+    	currentWordGenerator(Word);
+    	println(Word);
+    	println(CharArrayToString(CurrentWord));
      
-     while(Lives > 0) {
-    	 UserGuess = getCharacter();
-     println("You guessed: " + UserGuess);
-     boolean isTrue = checkForLetter(UserGuess, Word);
-     if(isTrue == true) {
-     println("YOU ARE CORRECT");
-     updateCurrentWord(UserGuess);
-     }
-     else {
-     canvas.noteIncorrectGuess(UserGuess);
-     Lives--;
-     println("You are incorect");
-     }
-     println("Lives remaining: " + Lives);
-     println("The word now looks like this: " + CurrentWord);
-     }
-}
-/** initializes the canvas and lexicon */
+    	while(Lives > 0 && checkIfWon(CurrentWord, Word) == false) {
+    		UserGuess = getCharacter();
+    		println("You guessed: " + UserGuess);
+    		if(checkForLetter(UserGuess, Word) == true) {
+    			println("YOU ARE CORRECT");
+    			updateCurrentWord(UserGuess, Word);
+    		}
+    		else {
+    			canvas.noteIncorrectGuess(UserGuess);
+    			Lives--;
+    			println("You are incorect");
+    		}
+    		println("Lives remaining: " + Lives);
+    		updateCurrentWord(UserGuess, Word);
+    		println("The word now looks like this: " + CharArrayToString(CurrentWord) );
+    	}
+    	if(Lives > 0) {
+    		println("YOU WIN!!! :-D");
+    	}
+    	else {
+    		println("YOU LOSE!! :(");
+    	}
+    }
+    
+/**
+ *Initializes the program.
+ *(Lexicon and Canvas)
+*/
     public void init() {
-     canvas = new HangmanCanvas();
-     canvas.reset();
-     add(canvas);
-     lexicon = new HangmanLexicon();
-     }
-/** chooses the next word */
+    	canvas = new HangmanCanvas();
+    	canvas.reset();
+    	add(canvas);
+    	lexicon = new HangmanLexicon();
+    }
+    
+/**
+ * Chooses the word from the lexicon.
+ 	* @return The word to be used in the game
+*/
     private String chooseWord() {
-int lexiconLength;
-int wordNumber;
-String THE_WORD;
-lexiconLength = lexicon.getWordCount();
-wordNumber = rg.nextInt(0, lexiconLength) - 1;
-THE_WORD = lexicon.getWord(wordNumber);
-     return THE_WORD;
+    	int lexiconLength;
+    	int wordNumber;
+    	String TheWord;
+    	lexiconLength = lexicon.getWordCount();
+    	wordNumber = rg.nextInt(0, lexiconLength) - 1;
+    	TheWord = lexicon.getWord(wordNumber);
+     return TheWord;
     }
-    /** Generates the currentWord String */
-    private void currentWordGenerator() {
-     int wordLength = Word.length();
-     CurrentWord = "-";
-     for(int i = 1; i < wordLength; i++) {
-     CurrentWord = CurrentWord + "-";
-     }
+    
+/**
+ * Generates the char[] of characters that the user guessed.
+ 	* @param Word The word that is being guessed.
+*/
+    private void currentWordGenerator(String Word) {
+    	int WordLength = Word.length();
+    	CurrentWord = new char[WordLength];
+    	for(int CharacterInArray = 0; CharacterInArray < WordLength; CharacterInArray++) {
+    		CurrentWord[CharacterInArray] = '-';
+    	}
     }
+/**
+ * Gets a character from the user.
+ 	* @return The character that the player entered.
+*/
     private char getCharacter() {
-     String LetterGuesed;
-     char letterGuesed;
-     LetterGuesed = readLine("guess a letter then press enter -->");
-     letterGuesed = LetterGuesed.charAt(0);
-     return letterGuesed;
+    	String LetterGuesed;
+    	char letterGuesed;
+    	LetterGuesed = readLine("guess a letter then press enter -->");
+    	letterGuesed = LetterGuesed.charAt(0);
+    	return letterGuesed;
     }
     
     private boolean checkForLetter(char Guess, String Word) {
@@ -94,19 +126,62 @@ THE_WORD = lexicon.getWord(wordNumber);
     			return true;
     		}
     	}
-    return false;
+    	return false;
     }
     
-    private int checkWhichLetter(char Guess, String Word) {
+/**
+ * Returns which characters in a word match the Guessed character.
+ 	* @param Guess Is the character that the user guessed.
+ 	* @param Word The word which has its character's searched for matching ones.
+ 	* @return A boolean array as long as the word. The places that are true are the places that have matching letters.
+*/
+    private boolean[] checkWhichLetter(char Guess, String Word) {
+    	boolean[] WhereAreLetters = new boolean[Word.length()];
     	for(int characters = 0; characters < Word.length(); characters++) {
     		if(Word.charAt(characters) == Guess) {
-    			return characters;
+    			WhereAreLetters[characters] = true;
+    		}
+    		else {
+    			WhereAreLetters[characters]  = false;
     		}
     	}
-    	return 0;
+		return WhereAreLetters;
+    }
+/**
+ * Updates the CurrentWord char[]
+	* @param Guess The user's guess
+	* @param Word The word that the user is guessing;
+*/
+    private void updateCurrentWord(char Guess, String Word) {
+        boolean[] GuessIsAt = checkWhichLetter(Guess, Word);
+        for(int Characters = 0; Characters < Word.length(); Characters++) {
+        	if(GuessIsAt[Characters] == true) {
+        		CurrentWord[Characters] = Guess;
+        	}
+        }
+    }
+/**
+ * Turns a char[] to a string.
+ 	* @param CharacterArray The char[] to be converted.
+ 	* @return The converted char[] that is now a string.
+*/
+    private String CharArrayToString(char[] CharacterArray) {
+    	String TheCurrentWord = new String(CharacterArray);
+    	return TheCurrentWord;
     }
     
-    private void updateCurrentWord(char Guess) {
-        int GuessIsAt = checkWhichLetter(UserGuess, Word);
+/**
+ * Returns true if the player has won the game.
+ 	* @param TheCurrentWord The char[] of letters the player has revealed
+ 	* @param Word The word that is trying to be guessed.
+ 	* @return Returns true if the player appears to have won the game and returns false if the player has not won the game
+*/
+    private boolean checkIfWon(char[] TheCurrentWord, String Word) {
+		for(int Characters = 0; Characters < Word.length(); Characters++) {
+			if(TheCurrentWord[Characters] == '-') {
+				return false;
+			}
+		}
+		return true;
     }
 }
