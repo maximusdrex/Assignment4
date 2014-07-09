@@ -36,7 +36,9 @@ private int Lives = 8;
 /**
  * Runs the program.
  */
-    public void run() {
+    public void run() {   
+    	canvas.reset();
+    	
     	//Starts the game
     	setTitle("Hangman");
     	println("Welcome to hangman!");
@@ -47,7 +49,6 @@ private int Lives = 8;
     	currentWordGenerator(Word);
     	println(Word);
     	println(CharArrayToString(CurrentWord));
-     
     	while(Lives > 0 && checkIfWon(CurrentWord, Word) == false) {
     		UserGuess = getCharacter();
     		println("You guessed: " + UserGuess);
@@ -64,6 +65,7 @@ private int Lives = 8;
     		updateCurrentWord(UserGuess, Word);
     		println("The word now looks like this: " + CharArrayToString(CurrentWord) );
     	}
+    	//Prints "You win" if you win and "You lose" if you lose.
     	if(Lives > 0) {
     		println("YOU WIN!!! :-D");
     	}
@@ -77,8 +79,9 @@ private int Lives = 8;
  *(Lexicon and Canvas)
 */
     public void init() {
+    	this.setSize(1200,800);
     	canvas = new HangmanCanvas();
-    	canvas.reset();
+    	
     	add(canvas);
     	lexicon = new HangmanLexicon();
     }

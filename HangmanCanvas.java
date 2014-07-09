@@ -12,8 +12,10 @@ public class HangmanCanvas extends GCanvas {
 	public void reset() {
 		GLine ScaffoldPost = new GLine(getWidth() / 4, getHeight() * 3 / 4, getWidth() / 4, getHeight() * 3 / 4 - SCAFFOLD_HEIGHT);
 		GLine Beam = new GLine(getWidth() / 4, getHeight() * 3 / 4 - SCAFFOLD_HEIGHT, getWidth() / 4 + 144, getHeight() * 3 / 4 - SCAFFOLD_HEIGHT);
-		add(ScaffoldPost);
+		GLine Rope = new GLine(getWidth() / 4 + 144, getHeight() * 3 / 4 - SCAFFOLD_HEIGHT, getWidth() / 4 + 144, getHeight() * 3 / 4 - SCAFFOLD_HEIGHT + ROPE_LENGTH);
+		add(ScaffoldPost);		
 		add(Beam);
+		add(Rope);
 	}
 
 /**
@@ -22,7 +24,10 @@ public class HangmanCanvas extends GCanvas {
  * been guessed so far; unguessed letters are indicated by hyphens.
  */
 	public void displayWord(String word) {
-		/* You fill this in */
+		GObject OldLabel = getElementAt(getWidth() / 2, 10);
+		remove(OldLabel);
+		GLabel TheCurrentWord = new GLabel(word, getWidth() / 2, 10);
+		add(TheCurrentWord);
 	}
 
 /**
